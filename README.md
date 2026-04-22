@@ -14,7 +14,3 @@ Optimizer: Python OR-Tools (CP-SAT)
 
 - Build frontend assets: `npm run build`
 - Run server (serves API + built frontend): `npm run start`
-
-## Deployment
-
-See `DEPLOY.md` for full deployment strategy and provider instructions.
