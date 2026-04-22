@@ -1,0 +1,14 @@
+{
+  "name": "praca_magisterska-root",
+  "private": true,
+  "workspaces": [
+    "front",
+    "back"
+  ],
+  "scripts": {
+    "dev:front": "npm run dev --workspace=front",
+    "dev:back": "npm run dev --workspace=back",
+    "build:front": "npm run build --workspace=front",
+    "start:back": "npm run start --workspace=back"
+  }
+}

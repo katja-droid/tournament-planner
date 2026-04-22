@@ -1,0 +1,18 @@
+services:
+  tournament-app:
+    build: .
+    container_name: tournament-app
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      JWT_SECRET: change_me_for_prod
+      PYTHON_EXECUTABLE: python3
+      OPTIMIZER_TIMEOUT_MS: 20000
+    volumes:
+      - tournament-data:/app/back/data
+    restart: unless-stopped
+
+volumes:
+  tournament-data:

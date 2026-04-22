@@ -1,0 +1,69 @@
+:root {
+  --primary-color: #003366;
+  --primary-hover: #004080;
+  --heading-color: #003366;
+  --accent-color: #3399ff;
+  --bg-color: #f4f7f6;
+  --text-color: #333333;
+  --text-light: #777777;
+  --border-color: #eeeeee;
+  --white: #ffffff;
+  --success: #28a745;
+  --danger: #ff4d4d;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --primary-color: #4f8cff;
+  --primary-hover: #6aa0ff;
+  --heading-color: #f5f7ff;
+  --accent-color: #7ab6ff;
+  --bg-color: #0f131a;
+  --text-color: #eef3ff;
+  --text-light: #bac7e2;
+  --border-color: #2a3447;
+  --white: #161d29;
+  --success: #49c16d;
+  --danger: #ff6b6b;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+// SCSS variables proxy to CSS variables for backward compat in other scss files
+$primary-color: var(--primary-color);
+$primary-hover: var(--primary-hover);
+$heading-color: var(--heading-color);
+$accent-color: var(--accent-color);
+$bg-color: var(--bg-color);
+$text-color: var(--text-color);
+$text-light: var(--text-light);
+$border-color: var(--border-color);
+$white: var(--white);
+$success: var(--success);
+$danger: var(--danger);
+$shadow: var(--shadow);
+$shadow-hover: var(--shadow-hover);
+
+// Breakpoints
+$bp-mobile: 480px;
+$bp-tablet: 768px;
+$bp-desktop: 1024px;
+
+@mixin mobile {
+  @media (max-width: #{$bp-tablet - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$bp-tablet}) and (max-width: #{$bp-desktop - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$bp-desktop}) {
+    @content;
+  }
+}

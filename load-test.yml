@@ -1,0 +1,18 @@
+config:
+  # Podaj docelowy adres URL twojej aplikacji (lub serwera backendu), 
+  # upewnij się, że aplikacja jest w tym czasie odpalona!
+  target: "http://localhost:5173" 
+  phases:
+    # Ten scenariusz będzie powoli zwiększał ruch, co da piękny wykres wznoszący:
+    - duration: 60       # Czas trwania fazy: 60 sekund
+      arrivalRate: 5     # Startujemy od 5 wirtualnych użytkowników na sekundę
+      rampTo: 50         # Stopniowo zwiększamy aż do 50 na sekundę!
+      name: "Faza ramp-up (wzrost obciążenia)"
+scenarios:
+  - name: "Podgląd tabeli uczestników i harmonogramu"
+    flow:
+      - get:
+          url: "/"
+      - think: 2         # Użytkownik "myśli" 2 sekundy po wejściu
+      - get:
+          url: "/schedule"
