@@ -18,5 +18,5 @@ Optimizer: Python OR-Tools (CP-SAT)
 ## Preview
 
 ![me](https://raw.githubusercontent.com/katja-droid/tournament-planner/main/1.gif)
-![me](https://raw.githubusercontent.com/katja-droid/tournament-planner/e8d526fb64fd42e62f390f89e170abc62b65a3f0/2.gif)
-![me](https://raw.githubusercontent.com/katja-droid/tournament-planner/e8d526fb64fd42e62f390f89e170abc62b65a3f0/3.gif)
+![me](https://raw.githubusercontent.com/katja-droid/tournament-planner/main/2.gif)
+![me](https://raw.githubusercontent.com/katja-droid/tournament-planner/main/3.gif)
