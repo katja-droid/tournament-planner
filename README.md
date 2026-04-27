@@ -16,7 +16,4 @@ Optimizer: Python OR-Tools (CP-SAT)
 - Run server (serves API + built frontend): `npm run start`
 
 ## Preview
-![me](https://github.com/katja-droid/tournament-planner/blob/e8d526fb64fd42e62f390f89e170abc62b65a3f0/pm-1.gif)
-![me](https://github.com/katja-droid/tournament-planner/blob/e8d526fb64fd42e62f390f89e170abc62b65a3f0/pm-2.gif)
-![me](https://github.com/katja-droid/tournament-planner/blob/e8d526fb64fd42e62f390f89e170abc62b65a3f0/pm-3.gif)
 
