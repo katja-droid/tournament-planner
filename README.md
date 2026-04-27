@@ -16,6 +16,6 @@ Optimizer: Python OR-Tools (CP-SAT)
 - Run server (serves API + built frontend): `npm run start`
 
 ## Preview
-![hippo](https://drive.google.com/file/d/1biEnaLe2eBUyS20a2gjXyGg6YpSrOQfZ/view?usp=sharing)
+![hippo]([https://drive.google.com/file/d/1biEnaLe2eBUyS20a2gjXyGg6YpSrOQfZ/view?usp=sharing](https://drive.google.com/file/d/14k0E2EqrT_Mz7gwDdsyRT2_9KTrk_rlX/view?usp=sharing))
 ![hippo](https://drive.google.com/file/d/14k0E2EqrT_Mz7gwDdsyRT2_9KTrk_rlX/view?usp=sharing)
 
