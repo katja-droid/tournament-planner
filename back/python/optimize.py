@@ -35,6 +35,7 @@ def get_ml_edge_costs(participants):
     """
     Uses Machine Learning, Deep Learning, and NLP to predict the 'interest score'
     or 'match quality' between participants, using SHAP/LIME for XAI and Pandas/Seaborn for data handling.
+    Now trained on real open-source ATP Tennis Data.
     """
     n = len(participants)
     
@@ -48,47 +49,87 @@ def get_ml_edge_costs(participants):
     doc_texts = [str(p) for p in participants]
     tokens = [nlp(text) for text in doc_texts]
     
-    vectorizer = TfidfVectorizer()
-    try:
-        tfidf_features = vectorizer.fit_transform(doc_texts).toarray()
-    except ValueError:
-        tfidf_features = np.random.rand(n, 2)
-        
-    # Data & Plots: Pandas, NumPy, Matplotlib, Seaborn
-    np.random.seed(42)
-    feature_dim = tfidf_features.shape[1] * 2
-    X_train_df = pd.DataFrame(np.random.rand(100, feature_dim), 
-                              columns=[f"f_{i}" for i in range(feature_dim)])
-    y_train_series = pd.Series(X_train_df.sum(axis=1) * 0.5 + np.random.randn(100) * 0.1)
+    # Use character n-grams so that arbitrary local participant names can share features with real tennis players
+    vectorizer = TfidfVectorizer(analyzer='char', ngram_range=(2, 4), max_features=100)
     
+    # 1. Fetch real dataset (ATP Tennis Matches 2023)
+    try:
+        url = "https://raw.githubusercontent.com/JeffSackmann/tennis_atp/master/atp_matches_2023.csv"
+        df = pd.read_csv(url)
+        # Drop rows missing minutes (duration)
+        df = df.dropna(subset=['minutes', 'winner_name', 'loser_name'])
+        
+        # Limit to 300 rows to keep runtime fast during HTTP request
+        df = df.head(1000)
+        
+        # Target: Match duration in minutes (longer = better/closer match)
+        y_train_series = df['minutes']
+        
+        # Features: Concatenate TF-IDF of winner and loser
+        winner_features = vectorizer.fit_transform(df['winner_name']).toarray()
+        loser_features = vectorizer.transform(df['loser_name']).toarray()
+        X_train_features = np.hstack((winner_features, loser_features))
+        
+        feature_dim = X_train_features.shape[1]
+        X_train_df = pd.DataFrame(X_train_features, columns=[f"f_{i}" for i in range(feature_dim)])
+        
+        is_real_data = True
+    except Exception as fetch_err:
+        import sys
+        print(f"Failed to fetch real data: {fetch_err}, using synthetic.", file=sys.stderr)
+        is_real_data = False
+        
+        # Synthetic fallback
+        try:
+            tfidf_features = vectorizer.fit_transform(doc_texts).toarray()
+        except ValueError:
+            tfidf_features = np.random.rand(n, 30)
+            
+        np.random.seed(42)
+        feature_dim = tfidf_features.shape[1] * 2
+        X_train_df = pd.DataFrame(np.random.rand(100, feature_dim), 
+                                  columns=[f"f_{i}" for i in range(feature_dim)])
+        y_train_series = pd.Series(X_train_df.sum(axis=1) * 0.5 + np.random.randn(100) * 0.1)
+
+    # Local participants features
+    try:
+        if is_real_data:
+            local_features = vectorizer.transform(doc_texts).toarray()
+        else:
+            local_features = vectorizer.fit_transform(doc_texts).toarray()
+    except Exception:
+        local_features = np.random.rand(n, feature_dim // 2)
+
+    # Plot match duration distribution
     try:
         plt.figure(figsize=(6,4))
         sns.histplot(y_train_series, kde=True)
-        plt.title("Match Quality Distribution")
+        plt.title("Match Quality Distribution (Minutes Played)")
         plt.savefig("ml_match_quality.png")
         plt.close()
     except Exception:
         pass
     
     # Classical ML: RandomForest, LinearSVC, LogisticRegression
-    rf_model = RandomForestRegressor(n_estimators=10, random_state=42)
+    rf_model = RandomForestRegressor(n_estimators=50, max_depth=15, random_state=42)
     rf_model.fit(X_train_df, y_train_series)
     
     classification_target = (y_train_series > y_train_series.median()).astype(int)
-    log_reg = LogisticRegression(max_iter=100)
+    log_reg = LogisticRegression(max_iter=500)
     log_reg.fit(X_train_df, classification_target)
     
-    svc_model = LinearSVC(max_iter=100, dual=False)
+    svc_model = LinearSVC(max_iter=500, dual=False)
     svc_model.fit(X_train_df, classification_target)
     
     # Deep Learning: TensorFlow, Keras
     tf.config.set_visible_devices([], 'GPU')
     dl_model = Sequential([
-        Dense(8, activation='relu', input_shape=(feature_dim,)),
+        Dense(16, activation='relu', input_shape=(feature_dim,)),
+        Dense(8, activation='relu'),
         Dense(1)
     ])
     dl_model.compile(optimizer='adam', loss='mse')
-    dl_model.fit(X_train_df.values, y_train_series.values, epochs=1, verbose=0)
+    dl_model.fit(X_train_df.values, y_train_series.values, epochs=5, batch_size=32, verbose=0)
     
     # XAI: SHAP, LIME
     try:
@@ -108,9 +149,10 @@ def get_ml_edge_costs(participants):
     edge_costs = {}
     for i in range(n):
         for j in range(i + 1, n):
-            f1, f2 = tfidf_features[i], tfidf_features[j]
+            f1, f2 = local_features[i], local_features[j]
             combined_features = np.concatenate([f1, f2]).reshape(1, -1)
             
+            # Ensure dimensions match in case of padding issues
             if combined_features.shape[1] < feature_dim:
                 pad = np.zeros((1, feature_dim - combined_features.shape[1]))
                 combined_features = np.hstack((combined_features, pad))
@@ -123,8 +165,11 @@ def get_ml_edge_costs(participants):
             dl_pred = dl_model.predict(combined_df.values, verbose=0)[0][0]
             
             pred_quality = (rf_pred + dl_pred) / 2.0
-            cost = int((2.0 - pred_quality) * 100)
-            edge_costs[(i, j)] = max(1, cost)
+            
+            # The higher the predicted minutes (quality), the lower the cost
+            max_expected_minutes = y_train_series.max() if not y_train_series.empty else 120.0
+            cost = int(max(1, (max_expected_minutes - pred_quality) * 10))
+            edge_costs[(i, j)] = cost
             
     return edge_costs
 
