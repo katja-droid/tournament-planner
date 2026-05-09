@@ -13,6 +13,14 @@ An intelligent tournament management system that leverages a hybrid Artificial I
     *   **Data Processing:** `Pandas`, `NumPy`, `Matplotlib`, `Seaborn`
     *   **Prescriptive AI:** Google OR-Tools (Constraint Programming / CP-SAT)
 
+AI Matchmaking Engine (Hybrid Intelligence)
+Unlike standard CP-SAT systems that minimize arbitrary numerical differences, this tournament planner features an intelligent matchmaking pipeline:
+- **Open Source Data Training**: The ML models dynamically fetch and learn from the **ATP Men's Tennis Tour 2023 Open Dataset** (thousands of real professional matches).
+- **NLP Vectorization**: Player names are processed using `scikit-learn`'s `TfidfVectorizer` (Character N-Grams) to extract hidden phonetic features.
+- **Predictive Ensemble Models**: A `RandomForestRegressor`, `LinearSVC`, and a Multi-layer Perceptron (Deep Learning via `Keras`/`TensorFlow`) work together to predict **Match Quality** (expected duration in minutes) for every possible pairing.
+- **Explainable AI (XAI)**: Integrated `SHAP` and `LIME` provide transparent insight into how the models evaluate player names to predict match lengths.
+- **Fail-Safe Mechanism**: The Python solver gracefully falls back to synthetic data modeling if internet connectivity is lost during optimization.
+
 ## Local development
 
 - Install all dependencies: `npm install`
