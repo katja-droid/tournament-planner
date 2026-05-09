@@ -1,1 +1,10 @@
 ortools>=9.10.4067
+scikit-learn>=1.0.0
+numpy>=1.20.0
+spacy
+pandas
+matplotlib
+seaborn
+shap
+lime
+tensorflow

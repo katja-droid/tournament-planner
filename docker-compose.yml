@@ -9,7 +9,7 @@ services:
       PORT: 4000
       JWT_SECRET: change_me_for_prod
       PYTHON_EXECUTABLE: python3
-      OPTIMIZER_TIMEOUT_MS: 20000
+      OPTIMIZER_TIMEOUT_MS: 60000
     volumes:
       - tournament-data:/app/back/data
     restart: unless-stopped

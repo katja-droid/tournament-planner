@@ -34,7 +34,7 @@ function heuristicRoundRobin(participantIds) {
 
 function runPythonOptimizer(payload) {
   const pythonExecutable = process.env.PYTHON_EXECUTABLE || 'python';
-  const timeoutMs = Number(process.env.OPTIMIZER_TIMEOUT_MS || 15_000);
+  const timeoutMs = Number(process.env.OPTIMIZER_TIMEOUT_MS || 60_000);
 
   return new Promise((resolve, reject) => {
     const child = spawn(pythonExecutable, [PYTHON_SCRIPT], {

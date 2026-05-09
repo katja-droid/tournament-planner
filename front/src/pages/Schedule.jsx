@@ -8,6 +8,7 @@ const Schedule = () => {
   const isPl = language === 'pl';
   
   const [autoPlan, setAutoPlan] = useState(true);
+  const [strategy, setStrategy] = useState('ml-planned');
   const [tournaments, setTournaments] = useState([]);
   const [matches, setMatches] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
@@ -64,7 +65,7 @@ const Schedule = () => {
   const runOptimization = async () => {
     if (!selectedTournamentId) return;
     try {
-      const result = await backendClient.optimizeTournament(token, selectedTournamentId, { strategy: 'round-robin' });
+      const result = await backendClient.optimizeTournament(token, selectedTournamentId, { strategy });
       setMatches(result.matches);
       setStatusMessage(result.run.summary);
       setAutoPlan(true);
@@ -107,6 +108,20 @@ const Schedule = () => {
         </div>
         {userRole === 'admin' && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '14px', fontWeight: 600 }}>{isPl ? 'Strategia' : 'Strategy'}</span>
+              <select 
+                value={strategy} 
+                onChange={(e) => setStrategy(e.target.value)} 
+                className="pretty-select" 
+                style={{ width: '150px' }}
+              >
+                <option value="ml-planned">ML Planned</option>
+                <option value="round-robin">Round Robin</option>
+                <option value="swiss">Swiss</option>
+                <option value="single-round">Single Round</option>
+              </select>
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ fontSize: '14px', fontWeight: 600 }}>{isPl ? 'Automatyczne Planowanie AI' : 'AI Automatic Planning'}</span>
               <label 
